@@ -1,0 +1,13 @@
+stages:
+- deploy
+
+docker:
+  stage: deploy
+  script:
+    - docker-compose down --rmi all
+    - docker-compose up -d --build
+  only:
+    - master
+  tags:
+    - appssudo
+

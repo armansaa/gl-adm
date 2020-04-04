@@ -1,0 +1,41 @@
+stages:
+  - compile
+  - build
+  - deploy
+
+compile-express:
+  image: "node:8.10"
+  stage: compile
+  script:
+    - npm install
+  only:
+    - feature-project-26
+
+build-docker-image:
+  image: docker:latest
+  services:
+    - docker:dind
+  stage: build
+  environment: staging
+  variables:
+    CONTAINER_IMAGE: kenzo5/node-easy
+    DOCKER_USER : kenzo5
+    DOCKER_PASSWORD : kupatsayur
+  script:
+    - 'ls'
+    - 'docker login -u $DOCKER_USER -p $DOCKER_PASSWORD docker.io'
+    - 'docker build -t $CONTAINER_IMAGE:latest .'
+    - 'docker push $CONTAINER_IMAGE:latest'   
+  only:
+    - feature-project-26
+
+deploy-to-pod1:
+  stage: deploy
+  tags: 
+    - pod1
+  script:
+  - 'docker pull kenzo5/node-easy:latest'
+  - 'docker run -d -p 8181:3000 --name kenzo kenzo5/node-easy:latest'
+  only:
+    - feature-project-26
+    - tags

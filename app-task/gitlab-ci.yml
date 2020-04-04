@@ -1,0 +1,29 @@
+image: node:8.10
+
+stages:
+  - build
+  - production
+    
+build:
+  type: build
+  script:
+    - npm install
+    - npm run build
+  only:
+    - master
+     
+deploy-production:
+  type: deploy
+  image: ruby:2.5.1
+  stage: production
+  only:
+    - master
+  environment:
+    name: production
+    url: https://$HEROKU_APP.$APP_DOMAIN  
+  script:
+    - apt-get update -qy
+    - apt-get install -y ruby ruby-dev rubygems-integration
+    - gem install dpl
+    - dpl --provider=heroku --app=$HEROKU_APP --api-key=$API_KEY
+

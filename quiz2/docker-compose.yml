@@ -1,0 +1,10 @@
+version: '3'
+services:
+  app:
+    image: kenzo5/node-easy:latest
+    hostname: node-easy
+    container_name: node-easy
+    volumes:
+      - ./node-easy
+    ports:
+      - "3000:3000"
